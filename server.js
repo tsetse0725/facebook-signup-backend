@@ -11,16 +11,16 @@ const PORT = 8000;
 app.use(bodyParser.json());
 app.use(require("cors")());
 
-const readUsers = () => {
-  const data = fs.readFileSync("users.json", "utf-8");
+const readUsers = async () => {
+  const data = await fs.readFileSync("users.json", "utf-8");
   return JSON.parse(data);
 };
 
-const writeUsers = (data) => {
-  fs.writeFileSync("users.json", JSON.stringify());
+const writeUsers = async (data) => {
+  await fs.writeFileSync("users.json", JSON.stringify());
 };
 
-app.post("/users", (req, res) => {
+app.post("/users", async (req, res) => {
   const { firstName, lastName, birthDate, gender, email, phone, password } =
     req.body;
 
@@ -30,9 +30,35 @@ app.post("/users", (req, res) => {
       .json({ message: "All required fields must be filled" });
   }
 
-  const users = readUsers();
+  const users = await readUsers();
   const exists = find((u) => u.email === email);
   if (exists) {
     return res.status(409).json({ message: "User already exists" });
   }
+  const newUser = {
+    id: uuidv4(),
+    firstName,
+    lastName,
+    birthDate,
+    gender,
+    email,
+    phone,
+    password,
+  };
+
+  users.push(newUser);
+  writeUsers(users);
+  res.status(201).JSON({ message: "User created", user: newUser });
+});
+
+app.get("/user", async (req, res) => {
+  const users = await readUsers();
+  res.json(users);
+});
+
+app.get("/email", async (req, res) => {
+  const users = await readUsers();
+  const user = users.find((u) => u.email === req.params.email);
+  if (!user) return res.status(404).json({ message: "User not found" });
+  res.json(user);
 });
