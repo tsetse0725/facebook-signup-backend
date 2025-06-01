@@ -1,0 +1,12 @@
+[
+  {
+    "id": "40b64bea-72e2-4fc4-aa9a-24b68f2d7d5e",
+    "firstName": "Naruto",
+    "lastName": "Uzumaki",
+    "birthDate": "2000-10-10",
+    "gender": "male",
+    "email": "naruto@example.com",
+    "phone": "99112233",
+    "password": "rasengan"
+  }
+]
